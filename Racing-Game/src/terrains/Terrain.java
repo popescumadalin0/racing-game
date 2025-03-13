@@ -31,12 +31,12 @@ public class Terrain {
 	private float[][] heights;
 
 	public Terrain(int gridX, int gridZ, Loader loader, TerrainTexturePack texturePack,
-			TerrainTexture blendMap, String heightMap) {
+			TerrainTexture blendMap) {
 		this.texturePack = texturePack;
 		this.blendMap = blendMap;
 		this.x = gridX * SIZE;
 		this.z = gridZ * SIZE;
-		this.model = generateTerrain(loader, heightMap);
+		this.model = generateTerrain(loader);
 	}
 
 	public float getX() {
@@ -87,15 +87,8 @@ public class Terrain {
         return answer;
     }
 
-	private RawModel generateTerrain(Loader loader, String heightMap) {
-		
-		BufferedImage image = null;
-		try {
-			image = ImageIO.read(new File("res/" + heightMap + ".png"));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		int VERTEX_COUNT = image.getHeight();
+	private RawModel generateTerrain(Loader loader) {
+		int VERTEX_COUNT = 128;
 
 		int count = VERTEX_COUNT * VERTEX_COUNT;
 		heights = new float[VERTEX_COUNT][VERTEX_COUNT];
@@ -107,11 +100,11 @@ public class Terrain {
 		for (int i = 0; i < VERTEX_COUNT; i++) {
 			for (int j = 0; j < VERTEX_COUNT; j++) {
 				vertices[vertexPointer * 3] = (float) j / ((float) VERTEX_COUNT - 1) * SIZE;
-				float height = getHeight(j, i, image);
+				float height = getHeight(j, i);
 				vertices[vertexPointer * 3 + 1] = height;
 				heights[j][i] = height;
 				vertices[vertexPointer * 3 + 2] = (float) i / ((float) VERTEX_COUNT - 1) * SIZE;
-				Vector3f normal = calculateNormal(j, i, image);
+				Vector3f normal = calculateNormal(j, i);
 				normals[vertexPointer * 3] = normal.x;
 				normals[vertexPointer * 3 + 1] = normal.y;
 				normals[vertexPointer * 3 + 2] = normal.z;
@@ -138,21 +131,21 @@ public class Terrain {
 		return loader.loadToVAO(vertices, textureCoords, normals, indices);
 	}
 	
-	private Vector3f calculateNormal(int x, int z, BufferedImage image){
-		float heightL = getHeight(x-1, z, image);
-		float heightR = getHeight(x+1, z, image);
-		float heightD = getHeight(x, z-1, image);
-		float heightU = getHeight(x, z+1, image);
+	private Vector3f calculateNormal(int x, int z){
+		float heightL = getHeight(x-1, z);
+		float heightR = getHeight(x+1, z);
+		float heightD = getHeight(x, z-1);
+		float heightU = getHeight(x, z+1);
 		Vector3f normal = new Vector3f(heightL-heightR, 2f, heightD - heightU);
 		normal.normalise();
 		return normal;
 	}
 	
-	private float getHeight(int x, int z, BufferedImage image){
-		if(x<0 || x>=image.getHeight() || z<0 || z>=image.getHeight()){
+	private float getHeight(int x, int z){
+		if(x<0 || x>=128 || z<0 || z>=128){
 			return 0;
 		}
-		float height = image.getRGB(x, z);
+		float height = 128;
 		height += MAX_PIXEL_COLOUR/2f;
 		height /= MAX_PIXEL_COLOUR/2f;
 		height *= MAX_HEIGHT;

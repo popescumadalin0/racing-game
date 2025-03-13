@@ -76,19 +76,12 @@ public class MainGameLoop {
 		flower.getTexture().setUseFakeLighting(true);
 		fern.getTexture().setHasTransparency(true);
 
-		Terrain terrain = new Terrain(0, -1, loader, texturePack, blendMap, "heightmap");
+		Terrain terrain = new Terrain(0, -1, loader, texturePack, blendMap);
 
 		List<Entity> entities = new ArrayList<Entity>();
 		Random random = new Random(676452);
-		for (int i = 0; i < 400; i++) {
-			if (i % 3 == 0) {
-				float x = random.nextFloat() * 800;
-				float z = random.nextFloat() * -600;
-				float y = terrain.getHeightOfTerrain(x, z);
-				
-				entities.add(new Entity(fern, random.nextInt(4), new Vector3f(x, y, z), 0, random.nextFloat() * 360,
-						0, 0.9f));
-			}
+		for (int i = 0; i < 200; i++) {
+
 			if (i % 1 == 0) {
 				float x = random.nextFloat() * 800;
 				float z = random.nextFloat() * -600;
@@ -97,13 +90,6 @@ public class MainGameLoop {
 						0, random.nextFloat() * 0.1f + 0.6f));
 			}
 			
-			if (i % 5 == 0) {
-				float x = random.nextFloat() * 800;
-				float z = random.nextFloat() * -600;
-				float y = terrain.getHeightOfTerrain(x, z);
-				entities.add(new Entity(cherry,random.nextInt(4), new Vector3f(x, y, z), 0, random.nextFloat() * 360,
-						0, random.nextFloat() * 0.1f + 0.6f));
-			}
 		}
 
 		Light light = new Light(new Vector3f(0, 10000, -7000), new Vector3f(1, 1, 1));
@@ -116,7 +102,6 @@ public class MainGameLoop {
 		Light lampLight5 = new Light(new Vector3f(500, terrain.getHeightOfTerrain(500, -450), -450), new Vector3f(1, 0, 1)); // Mov
 		Light lampLight6 = new Light(new Vector3f(600, terrain.getHeightOfTerrain(600, -550), -550), new Vector3f(1, 0.5f, 0)); // Portocaliu
 
-		// Adăugarea lămpilor la listă
 		lights.add(lampLight1);
 		lights.add(lampLight2);
 		lights.add(lampLight3);
@@ -125,7 +110,6 @@ public class MainGameLoop {
 		lights.add(lampLight6);
 	
 		
-		// Lămpile care se mișcă aleatoriu
 		List<Entity> movingLamps = new ArrayList<Entity>();
 		movingLamps.add(new MovingLamp(lamp, new Vector3f(185, terrain.getHeightOfTerrain(185, -293), -293), 0.5f));
 		movingLamps.add(new MovingLamp(lamp, new Vector3f(370, terrain.getHeightOfTerrain(370, -300), -300), 0.5f));
@@ -134,7 +118,7 @@ public class MainGameLoop {
 		movingLamps.add(new MovingLamp(lamp, new Vector3f(500, terrain.getHeightOfTerrain(500, -450), -450), 0.5f));
 		movingLamps.add(new MovingLamp(lamp, new Vector3f(600, terrain.getHeightOfTerrain(600, -550), -550), 0.5f));
 
-		// Adăugarea lămpilor în lista de entități
+
 		entities.addAll(movingLamps);
 
 
@@ -149,7 +133,6 @@ public class MainGameLoop {
 		
 		List<GuiTexture> guiTextures = new ArrayList<GuiTexture>();
 		GuiTexture gui = new GuiTexture(loader.loadTexture("health"),new Vector2f(-0.8f,0.9f), new Vector2f(0.2f,0.3f));
-		//guiTextures.add(gui);
 		GuiRenderer guiRenderer = new GuiRenderer(loader);
 
 		while (!Display.isCloseRequested()) {
@@ -159,15 +142,12 @@ public class MainGameLoop {
 		        if (player.checkCollision(entity)) {
 		            System.out.println("Coliziune detectată cu " + entity.getModel());
 
-		            // Calculăm vectorul de împingere
 		            Vector3f pushBack = new Vector3f();
 		            Vector3f.sub(player.getPosition(), entity.getPosition(), pushBack);
 
-		            // Verificăm dacă vectorul de coliziune nu are lungimea zero
 		            if (pushBack.length() != 0) {
 		                pushBack.normalise();
 
-		                // Mărim forța de împingere pentru a avea efect
 		                player.increasePosition(pushBack.x * 2f, pushBack.y * 1.5f, pushBack.z * 1.5f);
 		            }
 		        }
@@ -182,14 +162,6 @@ public class MainGameLoop {
 		        renderer.processEntity(entity);
 		    }
 		    
-		    for (Entity movingLamp : movingLamps) {
-		        if (movingLamp instanceof MovingLamp) {
-		            ((MovingLamp) movingLamp).update();  // Mișcarea aleatorie
-		        }
-		        renderer.processEntity(movingLamp);
-		    }
-
-
 
 		    renderer.render(lights, camera);
 		    guiRenderer.render(guiTextures);
