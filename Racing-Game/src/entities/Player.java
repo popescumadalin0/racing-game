@@ -13,13 +13,11 @@ public class Player extends Entity {
 	private static final float RUN_SPEED = 40;
 	private static final float TURN_SPEED = 160;
 	private static final float GRAVITY = -50;
-	private static final float JUMP_POWER = 18;
 
 	private float currentSpeed = 0;
 	private float currentTurnSpeed = 0;
 	private float upwardsSpeed = 0;
 
-	private boolean isInAir = false;
 
 	public Player(TexturedModel model, Vector3f position, float rotX, float rotY, float rotZ,
 			float scale) {
@@ -36,31 +34,24 @@ public class Player extends Entity {
 		upwardsSpeed += GRAVITY * DisplayManager.getFrameTimeSeconds();
 		super.increasePosition(0, upwardsSpeed * DisplayManager.getFrameTimeSeconds(), 0);
 		float terrainHeight = terrain.getHeightOfTerrain(getPosition().x, getPosition().z);
-		if (super.getPosition().y < terrainHeight) {
+		if (super.getPosition().y< terrainHeight) {
 			upwardsSpeed = 0;
-			isInAir = false;
 			super.getPosition().y = terrainHeight;
 		}
 	}
 
 	public boolean checkCollision(Entity other) {
         float distance = Vector3f.sub(this.getPosition(), other.getPosition(), null).length();
-        float combinedRadius = this.getScale() + other.getScale(); // Aproximare cu sfera de coliziune
+        float combinedRadius = this.getScale() + other.getScale() + 5;
         
         return distance < combinedRadius;
     }
-	
-	private void jump() {
-		if (!isInAir) {
-			this.upwardsSpeed = JUMP_POWER;
-			isInAir = true;
-		}
-	}
+
 
 	private void checkInputs() {
-		if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
 			this.currentSpeed = RUN_SPEED;
-		} else if (Keyboard.isKeyDown(Keyboard.KEY_S)) {
+		} else if (Keyboard.isKeyDown(Keyboard.KEY_W)) {
 			this.currentSpeed = -RUN_SPEED;
 		} else {
 			this.currentSpeed = 0;
@@ -72,10 +63,6 @@ public class Player extends Entity {
 			this.currentTurnSpeed = TURN_SPEED;
 		} else {
 			this.currentTurnSpeed = 0;
-		}
-
-		if (Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
-			jump();
 		}
 	}
 

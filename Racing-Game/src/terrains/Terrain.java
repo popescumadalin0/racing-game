@@ -84,7 +84,7 @@ public class Terrain {
                             heights[gridX][gridZ + 1], 1), new Vector2f(xCoord, zCoord));
         }
          
-        return answer;
+        return answer + 1.5f;
     }
 
 	private RawModel generateTerrain(Loader loader) {

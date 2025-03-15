@@ -17,11 +17,10 @@ public class MovingLamp extends Entity {
     }
 
     public void update() {
-        // Mișcare aleatorie pe axele X și Z
+
         float randomX = (random.nextFloat() - 0.5f) * speed;
         float randomZ = (random.nextFloat() - 0.5f) * speed;
 
-        // Actualizează poziția lămpii
         this.increasePosition(randomX, 0, randomZ);
     }
 }
