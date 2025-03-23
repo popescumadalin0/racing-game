@@ -83,7 +83,7 @@ public class MainGameLoop {
 
 		List<Light> lights = new ArrayList<Light>();
 
-		Light sun = new Light(new Vector3f(0, 10000, -7000), new Vector3f(1, 1, 1), true);
+		Light sun = new Light(new Vector3f(1000, terrain.getHeightOfTerrain(185, -293) + 9000, -7000), new Vector3f(1, 1, 1), true);
 		Light lampLight1 = new Light(new Vector3f(185, terrain.getHeightOfTerrain(185, -293) + 4, -293),
 				new Vector3f(0, 0, 1));
 		Light lampLight2 = new Light(new Vector3f(370, terrain.getHeightOfTerrain(370, -300) + 4, -300),
